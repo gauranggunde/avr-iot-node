@@ -1,0 +1,18 @@
+sourceRoot: ../cryptoauthlibSubmodule
+outputRoot: ./mcc_generated_files/CryptoAuthenticationLibrary
+modes: [ignore(.git)]
+removeExtensions: ftl
+
+data: {
+	deviceName: ATmega4808
+	deviceClass: AVR
+	i2cFunctions: {
+		open: I2C0_Open	
+	}
+	halInterface: I2C
+	noPoll: "true"
+	printf: "true"
+	deviceType: ATECC608A
+	i2cAddressLA: 0xB0
+	i2cClkspd: 100000
+}

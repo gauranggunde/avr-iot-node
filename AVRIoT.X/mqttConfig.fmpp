@@ -1,0 +1,7 @@
+sourceRoot: ../mqttSubmodule/mqttSourceFtl
+outputRoot: mcc_generated_files/mqtt
+modes: [ignore(mqtt_config.h.ftl)]
+removeExtensions: ftl
+
+data: {
+}
