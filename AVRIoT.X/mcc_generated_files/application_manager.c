@@ -56,6 +56,11 @@ SOFTWARE.
 #define SW_DEBOUNCE_INTERVAL   1460000L
 #define SW0_TOGGLE_STATE	   SW0_GetValue()
 #define SW1_TOGGLE_STATE	   SW1_GetValue()
+#ifdef AWS_IOT
+#define TOGGLE_ON  1
+#define TOGGLE_OFF 0
+static uint8_t toggleState = 0;
+#endif
 
 // This will contain the device ID, before we have it this dummy value is the init value which is non-0
 char attDeviceID[20] = "BAAAAADD1DBAAADD1D";
@@ -71,7 +76,10 @@ static void sendToCloud(void);
 static void updateDeviceShadow(void);
 static void subscribeToCloud(void);
 static void receivedFromCloud(uint8_t *topic, uint8_t *payload);
-
+#ifdef AWS_IOT
+static void setToggleState(uint8_t passedToggleState);
+static uint8_t getToggleState(void);
+#endif
 
 void application_init()
 {
@@ -193,7 +201,7 @@ void application_init()
 static void subscribeToCloud(void)
 {
 #ifdef AWS_IOT
-    sprintf(mqttSubscribeTopic, "$aws/things/%s/shadow/update", cid); 
+    sprintf(mqttSubscribeTopic, "$aws/things/%s/shadow/update/delta", cid); 
 #elif GOOGLE_IOT
     sprintf(mqttSubscribeTopic, "/devices/d%s/config", attDeviceID);
 #endif
@@ -204,11 +212,11 @@ static void subscribeToCloud(void)
 //This handles messages published from the MQTT server when subscribed
 static void receivedFromCloud(uint8_t *topic, uint8_t *payload)
 {
-    char *toggleToken = "toggle: " ;
+    char *toggleToken = "\"toggle\":";
     char *subString;
     ledTickState_t ledState;
 #ifdef AWS_IOT    
-   sprintf(mqttSubscribeTopic, "$aws/things/%s/shadow/update", cid);
+   sprintf(mqttSubscribeTopic, "$aws/things/%s/shadow/update/delta", cid);
 #endif
     if (strncmp((void*) mqttSubscribeTopic, (void*) topic, strlen(mqttSubscribeTopic)) == 0) 
     {
@@ -216,11 +224,18 @@ static void receivedFromCloud(uint8_t *topic, uint8_t *payload)
         {
             if (subString[strlen(toggleToken)] == '1')
             {   
+                //toggleState = 1;
+#ifdef AWS_IOT
+                setToggleState(TOGGLE_ON);
+#endif
                 ledState.Full2Sec = LED_ON_STATIC;
                 LED_modeYellow(ledState);
             }
             else
             {
+#ifdef AWS_IOT
+                setToggleState(TOGGLE_OFF);
+#endif
                 ledState.Full2Sec = LED_OFF_STATIC;
                 LED_modeYellow(ledState);
             }
@@ -275,17 +290,29 @@ static void sendToCloud(void)
 }
 
 #ifdef AWS_IOT   
+
+static void setToggleState(uint8_t passedToggleState)
+{
+    toggleState = passedToggleState;
+}
+
+static uint8_t getToggleState(void)
+{
+    return toggleState;
+}
+
 static void updateDeviceShadow(void)
 {
     static char payload[PAYLOAD_SIZE];
     static char topic[PUBLISH_TOPIC_SIZE];
+   
     int payloadLength = 0;
      
     memset((void*)topic, 0, sizeof(topic));
     sprintf(topic, "$aws/things/%s/shadow/update", cid);
     if (shared_networking_params.haveAPConnection)
     { 
-        payloadLength = sprintf(payload,"{\"state\":{\"reported\":{\"DeviceID\":\"%s\",\"LED\":%d}}}", attDeviceID, (LED_YELLOW_GetValue() >> 2));
+        payloadLength = sprintf(payload,"{\"state\":{\"reported\":{\"DeviceID\":\"%s\",\"toggle\":%d}}}", attDeviceID, getToggleState());
     }
     if (payloadLength >0) 
     {

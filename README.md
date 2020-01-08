@@ -25,10 +25,17 @@ The AVR-IoT WG development board combines a powerful 8-bit ATmega4808 MCU, an AT
   
 + AWS
   1. Publish packet
+     * topic:   thingID/sensors
+     * payload: {"DeviceID": "deviceID","Light": lightValue,"Temp": temperatureValue}
+  2. Subscribe packet from device
+     * topic:   $aws/things/thingID/shadow/update/delta
+  3. UI sends publish packet to shadow 
      * topic:   $aws/things/thingID/shadow/update
-	 * payload:  {"state":{"reported":{"Light":lightValue,"Temp":temperatureValue}}}
-  2. Subscribe packet 
+     * payload: {"state": {"desired": { "DeviceID": "deviceID","toggle": toBeUpdatedToggleValue } } } 
+  4. Publish packet to update device shadow/update/delta
      * topic:   $aws/things/thingID/shadow/update
+     * payload: {"state": {"reported": { "DeviceID": "deviceID","toggle": updatedToggleValue } } }
+	 Note: Press SW0 to send this packet
   
 #### The AVR IoT WG development board publishes data from the on-board light and temperature sensor every second to the cloud.
 #### The data received over the subscribed topic is displayed on a serial terminal.
