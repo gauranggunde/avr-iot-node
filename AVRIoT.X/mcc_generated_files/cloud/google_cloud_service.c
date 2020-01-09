@@ -114,17 +114,17 @@ int8_t CLOUD_connectSocket(uint32_t ipAddress)
 
 void CLOUD_connectAppProtocol(void)
 {
-	uint32_t timeStampReference;
-	timeStampReference = TIME_getCurrent();
-    
+    uint32_t timeStampReference;
+    timeStampReference = TIME_getCurrent(); 
     if (timeStampReference > 0)
     {
         // The JWT takes time in UNIX format (seconds since 1970), AVR-LIBC uses seconds from 2000 ...
         uint32_t offsetValue = TIME_getOffset_UNIX();
         updateJWT(timeStampReference + offsetValue);	  
         MQTT_CLIENT_connect();
+        debug_print("CLOUD: MQTT Connect"); 
     }      
-    debug_print("CLOUD: MQTT Connect");    
+       
     // MQTT SUBSCRIBE packet will be sent after the MQTT connection is established.
     cloudStatus.sendSubscribe = true;
 }

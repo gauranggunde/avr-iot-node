@@ -148,8 +148,13 @@ int8_t CLOUD_connectSocket(uint32_t ipAddress)
 
 void CLOUD_connectAppProtocol(void)
 {
-    debug_print("CLOUD: MQTT Connect");    
-    MQTT_CLIENT_connect();
+    uint32_t timeStampReference;
+    timeStampReference = TIME_getCurrent(); 
+    if (timeStampReference > 0)
+    {
+        MQTT_CLIENT_connect();  
+        debug_print("CLOUD: MQTT Connect"); 
+    }    
     // MQTT SUBSCRIBE packet will be sent after the MQTT connection is established.
     cloudStatus.sendSubscribe = true;
 }
