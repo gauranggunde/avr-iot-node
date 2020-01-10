@@ -396,9 +396,10 @@ static uint8_t reInit(void)
     
     mqttBrokerIP = 0;
     shared_networking_params.haveAPConnection = 0;
+    shared_networking_params.amConnectingAP = 1;
     cloudStatus.waitingForMQTT = false;
     cloudStatus.isResetting = false;
-	uint8_t wifi_creds;
+    uint8_t wifi_creds;
     
     //Re-init the WiFi
     wifi_reinit();
