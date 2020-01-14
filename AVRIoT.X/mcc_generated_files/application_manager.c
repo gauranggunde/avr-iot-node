@@ -59,6 +59,7 @@ SOFTWARE.
 #ifdef AWS_IOT
 #define TOGGLE_ON  1
 #define TOGGLE_OFF 0
+#define DEVICE_SHADOW_INIT_INTERVAL 1000L
 static uint8_t toggleState = 0;
 #endif
 
@@ -79,6 +80,8 @@ static void receivedFromCloud(uint8_t *topic, uint8_t *payload);
 #ifdef AWS_IOT
 static void setToggleState(uint8_t passedToggleState);
 static uint8_t getToggleState(void);
+uint32_t initDeviceShadow(void *payload);
+timerStruct_t initDeviceShadowTimer = {initDeviceShadow};
 #endif
 
 void application_init()
@@ -130,6 +133,7 @@ void application_init()
     
 #ifdef AWS_IOT    
     readThingIdFromWinc();
+    timeout_create(&initDeviceShadowTimer, DEVICE_SHADOW_INIT_INTERVAL );    
 #endif    
     // Blocking debounce
     for(i = 0; i < SW_DEBOUNCE_INTERVAL; i++)
@@ -224,7 +228,6 @@ static void receivedFromCloud(uint8_t *topic, uint8_t *payload)
         {
             if (subString[strlen(toggleToken)] == '1')
             {   
-                //toggleState = 1;
 #ifdef AWS_IOT
                 setToggleState(TOGGLE_ON);
 #endif
@@ -244,6 +247,9 @@ static void receivedFromCloud(uint8_t *topic, uint8_t *payload)
     }
     debug_printer(SEVERITY_NONE, LEVEL_NORMAL, "topic: %s", topic);
     debug_printer(SEVERITY_NONE, LEVEL_NORMAL, "payload: %s", payload);
+ #ifdef AWS_IOT  
+    updateDeviceShadow();
+#endif
 }
 
 // This will get called every 1 second only while we have a valid Cloud connection
@@ -301,11 +307,20 @@ static uint8_t getToggleState(void)
     return toggleState;
 }
 
+uint32_t initDeviceShadow(void *payload)
+{
+    if(CLOUD_checkIsConnected())
+    {
+        updateDeviceShadow();
+        return 0;
+    }
+    return DEVICE_SHADOW_INIT_INTERVAL;
+}
+
 static void updateDeviceShadow(void)
 {
     static char payload[PAYLOAD_SIZE];
     static char topic[PUBLISH_TOPIC_SIZE];
-   
     int payloadLength = 0;
      
     memset((void*)topic, 0, sizeof(topic));
@@ -345,7 +360,6 @@ uint32_t MAIN_dataTask(void *payload)
         if (delta >= CFG_SEND_INTERVAL)
         {
             previousTransmissionTime = timeNow;
-            
             // Call the data task in main.c
             sendToCloud();
         }
@@ -382,14 +396,7 @@ uint32_t MAIN_dataTask(void *payload)
         ledState.Full2Sec = LED_OFF_STATIC;
         LED_modeRed(ledState);
     }
-    
-#ifdef AWS_IOT  
-    if(SW0_TOGGLE_STATE == 0)
-    {
-        updateDeviceShadow();         
-    }   
-#endif
-    
+        
     // This is milliseconds managed by the RTC and the scheduler, this return 
     // makes the timer run another time, returning 0 will make it stop
     return MAIN_DATATASK_INTERVAL; 
@@ -397,8 +404,8 @@ uint32_t MAIN_dataTask(void *payload)
 
 void application_post_provisioning(void)
 {
-	CLOUD_setupTask(attDeviceID);
-	timeout_create(&MAIN_dataTasksTimer, MAIN_DATATASK_INTERVAL);
+    CLOUD_setupTask(attDeviceID);
+    timeout_create(&MAIN_dataTasksTimer, MAIN_DATATASK_INTERVAL);
 }
 
 // React to the WIFI state change here. Status of 1 means connected, Status of 0 means disconnected
