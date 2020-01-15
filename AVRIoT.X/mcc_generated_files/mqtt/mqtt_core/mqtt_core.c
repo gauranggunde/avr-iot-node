@@ -954,7 +954,6 @@ static mqttCurrentState mqttProcessPublish(mqttContext *mqttConnectionPtr)
    mqttPublishPacket rxPublishPacket;
    imqttHandlePublishDataFuncPtr publishRecvHandler;
    uint8_t remainingLengthIndex; 
-   uint8_t subTopicIndex;
 
    uint8_t mqttTopic[SUBSCRIBE_TOPIC_SIZE];
    uint8_t mqttPayload[PAYLOAD_SIZE];

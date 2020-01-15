@@ -21,14 +21,7 @@
     SOFTWARE.
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "mcc_generated_files/mcc.h"
 #include "mcc_generated_files/application_manager.h"
-#include "mcc_generated_files/led.h"
-#include "mcc_generated_files/cloud/cloud_service.h"
-#include "mcc_generated_files/debug_print.h"
 
 int main(void)
 {
