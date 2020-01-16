@@ -60,6 +60,7 @@ SOFTWARE.
 #define TOGGLE_ON  1
 #define TOGGLE_OFF 0
 #define DEVICE_SHADOW_INIT_INTERVAL 1000L
+#define UPDATE_DEVICE_SHADOW_BUFFER_TIME (2)
 static uint8_t toggleState = 0;
 #endif
 
@@ -309,10 +310,20 @@ static uint8_t getToggleState(void)
 
 uint32_t initDeviceShadow(void *payload)
 {
+    static uint32_t previousTime = 0;
     if(CLOUD_checkIsConnected())
-    {
-        updateDeviceShadow();
-        return 0;
+    {    
+       // Get the current time. This uses the C standard library time functions
+       uint32_t timeNow = TIME_getCurrent();
+       if(previousTime == 0)
+       {
+           previousTime = timeNow;         
+       }
+       else if((TIME_getDiffTime(timeNow, previousTime)) >= UPDATE_DEVICE_SHADOW_BUFFER_TIME)
+       {
+           updateDeviceShadow();
+           return 0; 
+       }
     }
     return DEVICE_SHADOW_INIT_INTERVAL;
 }
