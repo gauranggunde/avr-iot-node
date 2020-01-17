@@ -71,7 +71,7 @@ static bool isCommandReceived = false;
 static uint8_t index = 0;
 static bool commandTooLongFlag = false;
 
-const char * const cli_version_number             = "3.0";
+const char * const cli_version_number             = "4.0";
 const char * const firmware_version_number        = "1.2.1";
 
 static void command_received(char *command_text);
