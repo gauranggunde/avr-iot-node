@@ -71,7 +71,11 @@ static bool isCommandReceived = false;
 static uint8_t index = 0;
 static bool commandTooLongFlag = false;
 
-const char * const cli_version_number             = "4.0";
+#ifdef GOOGLE_IOT
+const char * const cli_version_number             = "3.0";
+#elif AWS_IOT
+const char * const cli_version_number             = "1.0";
+#endif
 const char * const firmware_version_number        = "2.0.0";
 
 static void command_received(char *command_text);
