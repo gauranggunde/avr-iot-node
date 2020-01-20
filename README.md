@@ -11,19 +11,56 @@ MPLAB® X IDE is a computer software program based on the open source NetBeans I
 MPLAB® XC compilers support all of Microchip’s PIC, AVR and dsPIC devices where the code is written in the C programming language. XC8 is the recommended compiler for 8-bit PIC MCUs and is also supported by some AVR devices. In this lab, as well as with the succeeding labs, you will be using MPLAB® XC8 for an AVR MCU.
 
 + **AVR IoT Development Board**:
-The AVR-IoT WG development board combines a powerful 8-bit ATmega4808 MCU, an ATECC608A CryptoAuthentication™ secure element IC and the fully certified ATWINC1510 Wi-Fi® network controller - which provides the most simple and effective way to connect your embedded application to a cloud platform. The board also includes an on-board debugger and requires no external hardware to program and debug the MCU.
+The AVR-IoT development board combines a powerful 8-bit ATmega4808 MCU, an ATECC608A CryptoAuthentication™ secure element IC and the fully certified ATWINC1510 Wi-Fi® network controller - which provides the most simple and effective way to connect your embedded application to a cloud platform. The board also includes an on-board debugger and requires no external hardware to program and debug the MCU.
 
+---
+
+## Project Platform Generation
+This base repository acts as a central point for AVR IoT project development. Variations required for
+cloud platforms are modified and produced using the FMPP framework, along with key token values used during project file generation.
+
+Follow the below steps within the clone repository space:
+0. **Required if 1st time executing FMPP from system EVER**: Follow the install instructions found presented within the 
+[tool-environment-setup](https://bitbucket.microchip.com/projects/CITD/repos/tool-environment-setup/browse) READEME.md documentation.
+   + Clone 'tool-environment-setup' repo.
+   + Run prerequisites.bat/.sh. (WINDOWS | MAC)
+      + Scripts should be run using Local Admin access as there will be tools installed during the process. 
+
+1. Modify the pipeline.bat (WIN) pipeline.sh (MAC, Linux) node fmppSourceFileGenerator.js output.
+
+``#Calls the tool to convert the templates for project operation.X and place the report in the 'output' directory ``
+``node fmppSourceFileGenerator.js cf=../ sp=../AVRIoT.X/ rp=./report ``
+
+2. Add Paremater (cf) to the ``node fmppSourceFileGenerator.js`` code.
+**Enter the below to produce the desired platform's readme file during shell/bat script execution.**
+   + Google: cf=../readme/google/README.md
+   + Amazon: cf=../readme/amazon/README.md
+   + Microsoft: cf=../readme/microsoft/README.md,../NextFile.fmpp
+
+3. Navigate to the Cloned Directory using Command Prompt (WIN), or Terminal (MAC, Linux)
+
+4. Execute the file:
+   + pipeline.bat       (Windows)
+   + sh pipleline.sh    (MAC, Linux)
+
+5. Required FMPP resources will be fetched automatically; and the project generation will occur.
+
+6. Once completed; the project will be ready to run or deploy.
+   + The generated project will contain (2) configuration options: GOOGLE_IOT, AWS_IOT
+   + Select the appropriate cloud platform configuration prior to programming.
+
+---
 
 ## Cloud Platforms
 
-+ Google Cloud
++ Google
   1. Publish packet
      * topic:   /devices/deviceID/events
 	 * payload:  {"Light":lightValue,"Temp":temperatureValue}
   2. Subscribe packet
      * topic:   /devices/deviceID/config
   
-+ AWS
++ Amazon
   1. Publish packet
      * topic:   thingID/sensors
      * payload: {"DeviceID": "deviceID","Light": lightValue,"Temp": temperatureValue}
@@ -32,12 +69,16 @@ The AVR-IoT WG development board combines a powerful 8-bit ATmega4808 MCU, an AT
   3. UI sends publish packet to shadow 
      * topic:   $aws/things/thingID/shadow/update
      * payload: {"state": {"desired": { "DeviceID": "deviceID","toggle": toBeUpdatedToggleValue } } } 
-  4. Publish packet to update device shadow/update/delta
+  4. Publish packet to update device shadow/update
      * topic:   $aws/things/thingID/shadow/update
      * payload: {"state": {"reported": { "DeviceID": "deviceID","toggle": updatedToggleValue } } }
 	 Note: Press SW0 to send this packet
   
-#### The AVR IoT WG development board publishes data from the on-board light and temperature sensor every second to the cloud.
++ Microsoft
+  1. Publish packet
+  2. Subscribe packet 
+
+#### The AVR IoT development board publishes data from the on-board light and temperature sensor every second to the cloud.
 #### The data received over the subscribed topic is displayed on a serial terminal.
 
 ## Sending MQTT publish packets  
