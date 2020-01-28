@@ -549,13 +549,13 @@ int_fast8_t winc_bus_init(void)
 
 int_fast8_t winc_bus_reset(void)
 {
-    static const uint8_t u8CmdBuf[4] = {CMD_RESET, 0xff, 0xff, 0xff/*, 0xaa*/};
+    static const uint8_t u8CmdBuf[5] = {CMD_RESET, 0xff, 0xff, 0xff, 0x00/*, 0xaa*/};
 
     // Clear bus error condition to allow command send to work
     bSPIBusError = false;
 
 #ifdef WINC_CRIT_SEC_BUS
-    if (WINC_BUS_SUCCESS != spi_cmd_send(u8CmdBuf, 4))
+    if (WINC_BUS_SUCCESS != spi_cmd_send(u8CmdBuf, 5))
     {
         WINC_ASSERT(0);
         return WINC_BUS_FAIL;
@@ -566,7 +566,7 @@ int_fast8_t winc_bus_reset(void)
     return WINC_BUS_SUCCESS;
 #else
     // Send command to reset SPI
-    return spi_cmd_send(u8CmdBuf, 4);
+    return spi_cmd_send(u8CmdBuf, 5);
 #endif
 }
 

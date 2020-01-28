@@ -1000,3 +1000,21 @@ int8_t m2m_ping_req(uint32_t u32DstIP, uint8_t u8TTL, tpfPingCb fpPingCb)
 
     return SOCK_ERR_NO_ERROR;
 }
+
+int8_t sslEnableCertExpirationCheck(tenuSslCertExpSettings enuValidationSetting)
+{
+    tstrSslCertExpSettings  strSettings;
+    strSettings.u32CertExpValidationOpt = (uint32_t)enuValidationSetting;
+
+    if (M2M_SUCCESS != winc_hif_send_no_data(M2M_REQ_GROUP_IP, SOCKET_CMD_SSL_EXP_CHECK, &strSettings, sizeof(tstrSslCertExpSettings)))
+    {
+        return SOCK_ERR_INVALID;
+    }
+
+    return SOCK_ERR_NO_ERROR;
+}
+
+uint8_t IsSocketReady(void)
+{
+    return gbSocketInit;
+}

@@ -46,9 +46,17 @@
 #define CONF_WINC_RESET_ASSERT_TIME     50
 #endif
 
+
+/* Define to allow callback macros */
 #define CONF_WINC_HIF_CB_WIFI_HANDLER   m2m_wifi_cb
 #define CONF_WINC_HIF_CB_IP_HANDLER  m2m_ip_cb
 #define CONF_WINC_HIF_CB_SSL_HANDLER m2m_ssl_cb
+
+#ifdef CONF_WINC_HIF_CB_IP_HANDLER
+void CONF_WINC_HIF_CB_IP_HANDLER(uint8_t u8OpCode, uint16_t u16DataSize, uint32_t u32Addr);
+#else
+#define CONF_WINC_HIF_CB_IP_HANDLER hif_null_cb
+#endif
 
 #ifdef CONF_WINC_HIF_CB_HIF_HANDLER
 void CONF_WINC_HIF_CB_HIF_HANDLER(uint8_t u8OpCode, uint16_t u16DataSize, uint32_t u32Addr);

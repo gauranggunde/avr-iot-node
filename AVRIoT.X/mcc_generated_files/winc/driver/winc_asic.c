@@ -198,6 +198,8 @@ bool winc_chip_wake(void)
 
         if (u32ClkStatusReg & NBIT2)
         {
+            winc_bus_reset();
+            
             return true;
         }
 
@@ -205,6 +207,8 @@ bool winc_chip_wake(void)
     }
 
     WINC_LOG_ERROR("Failed to wake up the chip");
+
+    winc_bus_reset();
 
     return false;
 }

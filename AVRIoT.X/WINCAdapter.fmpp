@@ -1,0 +1,22 @@
+sources: ../wincSubmodule/driver/winc_adapter_mega.c.ftl
+outputFile: ./mcc_generated_files/winc/driver/winc_adapter.c
+
+removeExtensions: ftl
+
+data: {
+	delayFunctions: {
+		delayHeader: delay.h	
+		delayMs: DELAY_milliseconds	
+	}
+	nCSPinCustomName: nCS
+	intPinCustomName: INT
+	intPortPin: {
+		PORT: F	
+	}
+	cePinCustomName: CE
+	rstPinCustomName: RST
+	spiFunctions: {
+		functionName: spiMaster	
+	}
+	confName: WINC
+}

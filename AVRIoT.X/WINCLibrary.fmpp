@@ -1,0 +1,20 @@
+sourceRoot: ../wincSubmodule
+outputRoot: ./mcc_generated_files/winc
+
+modes: [ ignore(
+        .git
+		driver/winc_adapter_pic.c.ftl
+		driver/winc_adapter_mega.c.ftl
+		include/conf_winc.h.ftl
+		serial_bridge/*.ftl
+		)
+]
+removeExtensions: ftl
+
+data: {
+	isCryptoEnabled: disabled
+	isPIC16: "false"
+	isIPSocketEnabled: "true"
+	isSSLEnabled: "true"
+	isOTAEnabled: "false"
+}

@@ -87,11 +87,10 @@
 // <id> main_wlan_psk
 #define CFG_MAIN_WLAN_PSK "microchip"
 
-
 #define CFG_WLAN_AP_NAME "MCHP.IOT.ACCESSPOINT"
 
-
 #define CFG_WLAN_AP_IP_ADDRESS {192, 168, 1, 1}
+
 // </h>
 
 #endif /* CONF_WINC_H_INCLUDED */

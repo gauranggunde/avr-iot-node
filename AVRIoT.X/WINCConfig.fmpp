@@ -1,0 +1,21 @@
+sourceRoot: ../wincSubmodule/include
+outputRoot: ./mcc_generated_files/config
+modes: [ ignore(
+		conf_winc_defaults.h.ftl
+		winc.h.ftl
+		winc_legacy.h.ftl
+		)
+]
+removeExtensions: ftl
+
+data: {
+	isPIC16: "false"
+	isPIC8: "false"
+	wincSettings: {
+	    SSID: MCHP.IOT
+		AUTH: M2M_WIFI_SEC_WPA_PSK
+		PASS: microchip
+	}
+	softAPName: MCHP.IOT.ACCESSPOINT
+	wlanIPAddress: "192, 168, 1, 1"
+}
